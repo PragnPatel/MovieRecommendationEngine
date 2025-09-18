@@ -1,16 +1,16 @@
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 import streamlit as st
 
 data = pd.read_csv('data.csv')
 
 def create_sim():
-    cv = CountVectorizer()
-    count_matrix = cv.fit_transform(data['comb'])
-    sim = cosine_similarity(count_matrix)
-    return data,sim
+    tf = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tf.fit_transform(data['comb'])
+    similarity = linear_kernel(tfidf_matrix, tfidf_matrix)
+    return data,similarity
 
 def recommend(movie):
     movie = movie.lower()
@@ -52,4 +52,5 @@ selected_movie = st.selectbox("Type or select a movie from the dropdown",movie_l
 if st.button("Show Recommendation"):
     recommended_movies = recommend(selected_movie)
     for i in recommended_movies:
+
         st.subheader(i)
